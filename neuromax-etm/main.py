@@ -33,6 +33,7 @@ if __name__ == "__main__":
     
     logger = log.setup_logger(
         'main', os.path.join(current_run_dir, 'main.log'))
+    wandb.login(key="d00c9f41bdf432ec2cd6df65495965d629331898")
     wandb.init(project=prj, config=args)
     wandb.log({'time_stamp': current_time})
 
