@@ -8,6 +8,9 @@ def new_parser(name=None):
 def add_dataset_argument(parser):
     parser.add_argument('--dataset', type=str,
                         help='dataset name', default='YahooAnswers')
+    
+def add_logging_argument(parser):
+    parser.add_argument('--wandb_prj', type=str, default='topmost')
 
 
 def add_model_argument(parser):
@@ -40,6 +43,9 @@ def add_training_argument(parser):
                             currently support: step', default='StepLR')
     parser.add_argument('--lr_step_size', type=int, default=125,
                         help='step size for learning rate scheduler')
+
+def add_eval_argument(parser):
+    parser.add_argument('--tune_SVM', action='store_true', default=False)
 
 
 def save_config(args, path):

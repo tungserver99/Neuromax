@@ -56,6 +56,17 @@ class NeuroMax(nn.Module):
         nn.init.trunc_normal_(self.topic_embeddings, std=0.1)
         self.topic_embeddings = nn.Parameter(
             F.normalize(self.topic_embeddings))
+        
+        # self.encoder1 = nn.Sequential(
+        #     nn.Linear(vocab_size, en_units),
+        #     nn.ReLU(),
+        #     nn.Linear(en_units, en_units),
+        #     nn.ReLU(),
+        #     nn.Dropout(dropout)
+        # )
+
+        # self.fc21 = nn.Linear(en_units, num_topics)
+        # self.fc22 = nn.Linear(en_units, num_topics)
 
         self.num_topics_per_group = num_topics // num_groups
         self.ECR = ECR(weight_loss_ECR, alpha_ECR, sinkhorn_max_iter)
@@ -94,9 +105,11 @@ class NeuroMax(nn.Module):
                 + self.group_connection_regularizer.T) / 2.
 
     def get_beta(self):
-        dist = self.pairwise_euclidean_distance(
-            self.topic_embeddings, self.word_embeddings)
-        beta = F.softmax(-dist / self.beta_temp, dim=0)
+        # dist = self.pairwise_euclidean_distance(
+        #     self.topic_embeddings, self.word_embeddings)
+        # beta = F.softmax(-dist / self.beta_temp, dim=0)
+        # return beta
+        beta = F.softmax(torch.matmul(self.topic_embeddings, self.word_embeddings.T), dim=1)
         return beta
 
     def reparameterize(self, mu, logvar):
@@ -194,7 +207,7 @@ class NeuroMax(nn.Module):
 
         loss_TM = recon_loss + loss_KL
 
-        loss_ECR = self.get_loss_ECR()
+        #loss_ECR = self.get_loss_ECR()
         loss_InfoNCE = self.compute_loss_InfoNCE(rep, contextual_emb)
         if epoch_id == 10 and self.group_connection_regularizer is None:
             self.create_group_connection_regularizer()
@@ -203,12 +216,12 @@ class NeuroMax(nn.Module):
         else:
             loss_GR = 0.
 
-        loss = loss_TM + loss_ECR + loss_GR + loss_InfoNCE
+        # loss = loss_TM + loss_ECR + loss_GR + loss_InfoNCE
+        loss = loss_TM + loss_GR + loss_InfoNCE
 
         rst_dict = {
             'loss': loss,
             'loss_TM': loss_TM,
-            'loss_ECR': loss_ECR,
             'loss_GR': loss_GR,
             'loss_InfoNCE': loss_InfoNCE,
         }

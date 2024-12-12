@@ -7,6 +7,7 @@ from utils import static_utils
 import logging
 import os
 import scipy
+import wandb
 
 
 class BasicTrainer:
@@ -58,6 +59,7 @@ class BasicTrainer:
         for epoch in tqdm(range(1, self.epochs + 1)):
             self.model.train()
             loss_rst_dict = defaultdict(float)
+            wandb.log({'epoch': epoch})
 
             for batch_data in dataset_handler.train_dataloader:
 
@@ -76,7 +78,9 @@ class BasicTrainer:
                     except:
                         loss_rst_dict[key] += rst_dict[key] * len(batch_data)
 
-
+            for key in loss_rst_dict:
+                wandb.log({key: loss_rst_dict[key] / data_size})
+            
             if self.lr_scheduler:
                 lr_scheduler.step()
 
