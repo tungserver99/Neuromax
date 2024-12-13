@@ -3,9 +3,11 @@
 # Define the arrays for weight_GR and weight_InfoNCE
 num_groups_values=(10, 20, 30, 40, 50)
 #weight_GR_values=(1 5 10 20 50)
-weight_GR_values=(1 5 10)
+# weight_GR_values=(1 5 10)
+weight_GR_values=(5 10)
 # weight_InfoNCE_values=(1 10 30 50 80 100 130 150)
-weight_InfoNCE_values=(80 100 130 150)
+#weight_InfoNCE_values=(80 100 130 150)
+weight_InfoNCE_values=(150 130 100 80)
 
 # Loop through each combination of weight_GR and weight_InfoNCE
 for weight_GR in "${weight_GR_values[@]}"; do
